@@ -127,14 +127,14 @@ void HomieClass::setBrand(const char* name) {
   strcpy(this->_interface.brand, name);
 }
 
-void HomieClass::registerNode(const HomieNode& node) {
+void HomieClass::registerNode(HomieNode* node) {
   this->_checkBeforeSetup(F("registerNode"));
   if (this->_interface.registeredNodesCount > MAX_REGISTERED_NODES_COUNT) {
     Serial.println(F("✖ register(): the max registered nodes count has been reached"));
     abort();
   }
 
-  this->_interface.registeredNodes[this->_interface.registeredNodesCount++] = &node;
+  this->_interface.registeredNodes[this->_interface.registeredNodesCount++] = node;
 }
 
 bool HomieClass::isReadyToOperate() {
@@ -190,7 +190,7 @@ void HomieClass::disableResetTrigger() {
   this->_interface.reset.enabled = false;
 }
 
-bool HomieClass::setNodeProperty(const HomieNode& node, const char* property, const char* value, bool retained) {
+bool HomieClass::setNodeProperty(HomieNode* node, const char* property, const char* value, bool retained) {
   if (!this->isReadyToOperate()) {
     this->_logger.logln(F("✖ setNodeProperty(): impossible now"));
     return false;
@@ -199,7 +199,7 @@ bool HomieClass::setNodeProperty(const HomieNode& node, const char* property, co
   strcpy(this->_mqttClient.getTopicBuffer(), this->_config.get().mqtt.baseTopic);
   strcat(this->_mqttClient.getTopicBuffer(), this->_config.get().deviceId);
   strcat_P(this->_mqttClient.getTopicBuffer(), PSTR("/"));
-  strcat(this->_mqttClient.getTopicBuffer(), node.getId());
+  strcat(this->_mqttClient.getTopicBuffer(), node->getId());
   strcat_P(this->_mqttClient.getTopicBuffer(), PSTR("/"));
   strcat(this->_mqttClient.getTopicBuffer(), property);
 
