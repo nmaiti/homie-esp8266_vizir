@@ -7,5 +7,6 @@ namespace HomieInternals {
   struct Subscription {
     char property[MAX_NODE_PROPERTY_LENGTH];
     PropertyInputHandler inputHandler;
+//	HomieNode* homienode;
   };
 }

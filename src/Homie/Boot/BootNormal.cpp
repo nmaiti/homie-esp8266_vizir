@@ -226,6 +226,9 @@ void BootNormal::_mqttCallback(char* topic, char* payload) {
   String node = unified.substring(0, separator);
   String property = unified.substring(separator + 1);
 
+  this->_interface->logger->log(F("NBMX Total Nodes: "));
+  this->_interface->logger->logln(this->_interface->registeredNodesCount);
+ 
   int homieNodeIndex = -1;
   for (int i = 0; i < this->_interface->registeredNodesCount; i++) {
     const HomieNode* homieNode = this->_interface->registeredNodes[i];

@@ -49,7 +49,6 @@ void HomieClass::_checkBeforeSetup(const __FlashStringHelper* functionName) {
 }
 
 void HomieClass::setup() {
-  _setupCalled = true;
 
   if (this->_logger.isEnabled()) {
     Serial.begin(BAUD_RATE);
@@ -79,6 +78,10 @@ void HomieClass::setup() {
         break;
     }
   }
+this->_logger.logln(F("NBM Here in setup"));
+	this->nodesfromConfig();
+
+_setupCalled = true;
 
   this->_boot->setup();
 }
@@ -125,6 +128,21 @@ void HomieClass::setBrand(const char* name) {
   }
 
   strcpy(this->_interface.brand, name);
+}
+
+void HomieClass::nodesfromConfig(void) {
+	int nnodes = this->_config.get().total_nodes;
+	this->_logger.logln(F("NBM No of nodes "));
+	this->_logger.logln(nnodes);
+
+	if (!nnodes)
+		return;
+	for (int i = 0; i < nnodes; i++) {
+		HomieNode *lightNd;
+		lightNd = new HomieNode(this->_config.get().nodes[i].name, this->_config.get().nodes[i].type);
+		Homie.registerNode(lightNd);
+		this->_logger.logln(F("NBM Here in setup"));
+	}
 }
 
 void HomieClass::registerNode(HomieNode* node) {

@@ -30,6 +30,7 @@ class HomieNode {
 
     const char* _id;
     const char* _type;
+	char* gpio;
     HomieInternals::Subscription _subscriptions[HomieInternals::MAX_SUBSCRIPTIONS_COUNT_PER_NODE];
     unsigned char _subscriptionsCount;
     bool _subscribeToAll;

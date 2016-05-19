@@ -31,6 +31,7 @@ void HomieNode::subscribe(const char* property, PropertyInputHandler inputHandle
   Subscription subscription;
   strcpy(subscription.property, property);
   subscription.inputHandler = inputHandler;
+//  subscription.homenode = &this;
   this->_subscriptions[this->_subscriptionsCount++] = subscription;
 }
 
