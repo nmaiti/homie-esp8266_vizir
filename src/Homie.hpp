@@ -41,10 +41,10 @@ namespace HomieInternals {
       void setSetupFunction(OperationFunction function);
       void setLoopFunction(OperationFunction function);
       bool isReadyToOperate();
-      bool setNodeProperty(HomieNode *node, const String& property, const String& value, bool retained = true) {
+      bool setNodeProperty(const HomieNode *node, const String& property, const String& value, bool retained = true) {
         return this->setNodeProperty(node, property.c_str(), value.c_str(), retained);
       }
-      bool setNodeProperty(HomieNode *node, const char* property, const char* value, bool retained = true);
+      bool setNodeProperty(const HomieNode *node, const char* property, const char* value, bool retained = true);
     private:
       bool _setupCalled;
       Boot* _boot;
