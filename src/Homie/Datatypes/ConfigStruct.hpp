@@ -26,6 +26,14 @@ namespace HomieInternals {
       } ssl;
     };
 
+    int total_nodes;
+	struct nodem {
+		char name[20];
+		char pin;
+		char  mode[15]; // gpio i/p mode [0] / gpio o/p mode/ pwm mode
+		char type[15];
+	} nodes[5];
+
     struct MQTT {
       Server server;
       char baseTopic[MAX_MQTT_BASE_TOPIC_LENGTH];

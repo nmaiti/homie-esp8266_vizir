@@ -123,6 +123,7 @@ void BootConfig::_onDeviceInfoRequest() {
   jsonLength += strlen(this->_interface->firmware.version);
   firmware["version"] = this->_interface->firmware.version;
 
+#if  0
   JsonArray& nodes = json.createNestedArray("nodes");
   for (int i = 0; i < this->_interface->registeredNodesCount; i++) {
     jsonLength += 20; // {"id":"","type":""},
@@ -135,7 +136,7 @@ void BootConfig::_onDeviceInfoRequest() {
 
     nodes.add(jsonNode);
   }
-
+#endif
   jsonLength++; // \0
 
   std::unique_ptr<char[]> jsonString(new char[jsonLength]);

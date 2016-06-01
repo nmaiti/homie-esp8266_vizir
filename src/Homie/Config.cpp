@@ -179,6 +179,50 @@ bool Config::load() {
   this->_configStruct.ota.server.ssl.enabled = reqOtaSsl;
   strcpy(this->_configStruct.ota.server.ssl.fingerprint, reqOtaFingerprint);
 
+  int i = 0;
+  JsonArray& nodes = parsedJson["nodes"].asArray();
+  int num_nodes = nodes.size();
+  this->_configStruct.total_nodes = num_nodes;
+  this->_interface->logger->log(F("NBM no of Json configured nodes:"));
+  this->_interface->logger->logln(num_nodes);
+
+  for (i=0; i< nodes.size(); i++) {
+	const char* tmp = "";
+
+	if (parsedJson["nodes"][i].as<JsonObject&>().containsKey("gpio")) {
+		unsigned int gpiopin =  parsedJson["nodes"][i]["gpio"];
+		this->_configStruct.nodes[i].pin = gpiopin; // - 48;
+	}
+
+	if (parsedJson["nodes"][i].as<JsonObject&>().containsKey("name")) {
+		tmp = parsedJson["nodes"][i]["name"];
+		strcpy(this->_configStruct.nodes[i].name, tmp);
+	}
+
+	const char* tmp1 = "";
+	if (parsedJson["nodes"][i].as<JsonObject&>().containsKey("type")) {
+		tmp1 = parsedJson["nodes"][i]["type"];
+		strcpy(this->_configStruct.nodes[i].type, tmp1);
+	}
+
+	const char* tmp2 = "";
+	if (parsedJson["nodes"][i].as<JsonObject&>().containsKey("iotype")) {
+		tmp2 = parsedJson["nodes"][i]["iotype"];
+		strcpy(this->_configStruct.nodes[i].mode, tmp2);
+	}
+	this->_interface->logger->log(F("gpio:"));
+	this->_interface->logger->logln((int)this->_configStruct.nodes[i].pin);
+	this->_interface->logger->log(F("name:"));
+	this->_interface->logger->logln(this->_configStruct.nodes[i].name);
+	this->_interface->logger->log(F("type:"));
+	this->_interface->logger->logln(this->_configStruct.nodes[i].type);
+	this->_interface->logger->log(F("iotype:"));
+	this->_interface->logger->logln(this->_configStruct.nodes[i].mode);
+  }
+
+
+
+
   return true;
 }
 
