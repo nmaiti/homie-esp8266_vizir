@@ -180,10 +180,13 @@ void HomieClass::registerJsonNodes(void) {
 		return;
 	for (int i = 0; i < nnodes; i++) {
 		if (strcmp_P(this->_config.get().nodes[i].type , "light") == 0)  {
-			this->_logger.logln(F("NBM Registering config nodes"));
+			this->_logger.log(F("Registering dynamic nodes"));
 			HomieNode *lightNd;
 			lightNd = new HomieNode(this->_config.get().nodes[i].name, this->_config.get().nodes[i].type, lightonHandler2, true, this->_config.get().nodes[i].pin);
 			Homie.registerNode(lightNd);
+			this->_logger.log(F("For Pin : "));
+			this->_logger.logln(this->_config.get().nodes[i].pin);
+			lightNd->InitNodePin(this->_config.get().nodes[i].name, this->_config.get().nodes[i].pin);
 		}
 	}
 }

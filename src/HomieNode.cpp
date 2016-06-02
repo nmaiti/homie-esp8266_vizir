@@ -18,6 +18,25 @@ HomieNode::HomieNode(const char* id, const char* type, NodeInputHandler inputHan
   this->_gpio = Gpio;
 }
 
+bool HomieNode::InitNodePin(const char* id, char Gpio) {
+	if (Gpio == 'z')
+		return false ;
+	if ((strcmp(this->_type, "light") == 0) ||
+			(strcmp(this->_type, "switch") == 0)) {
+		  pinMode(Gpio, OUTPUT);
+		  digitalWrite(Gpio, LOW);
+		 Serial.print(F("NBM Inited OP pin: "));
+		 Serial.println(Gpio,DEC);
+	} else {
+		if ((strcmp(this->_type, "pwm") == 0) ||
+				(strcmp(this->_type, "dimmer") == 0)) {
+			return false; /*TODO:PWM here */
+		} else {
+			return false;
+		}
+	}
+}
+
 void HomieNode::subscribe(const char* property, PropertyInputHandler inputHandler) {
   if (strlen(property) + 1 > MAX_NODE_PROPERTY_LENGTH) {
     Serial.println(F("✖ subscribe(): the property string is too long"));
@@ -67,7 +86,7 @@ lightcontrol:
 	if ((property == "on") && (value == "true")) {
 		digitalWrite(pin, HIGH);
 	} else if ((property == "on") && (value == "false")) {
-		digitalWrite(pin, HIGH);
+		digitalWrite(pin, LOW);
 	} else
 		return false;
 

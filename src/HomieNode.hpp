@@ -27,6 +27,7 @@ class HomieNode {
     const HomieInternals::Subscription* getSubscriptions() const;
     unsigned char getSubscriptionsCount() const;
     bool getSubscribeToAll() const;
+	bool InitNodePin(const char* id, char Gpio);
     HomieInternals::NodeInputHandler getInputHandler() const;
 
     const char* _id;
