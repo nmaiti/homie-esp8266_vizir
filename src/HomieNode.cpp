@@ -2,7 +2,7 @@
 
 using namespace HomieInternals;
 
-HomieNode::HomieNode(const char* id, const char* type, NodeInputHandler inputHandler, bool subscribeToAll)
+HomieNode::HomieNode(const char* id, const char* type, NodeInputHandler inputHandler, bool subscribeToAll, char Gpio)
 : _id(id)
 , _type(type)
 , _subscriptionsCount(0)
@@ -15,6 +15,7 @@ HomieNode::HomieNode(const char* id, const char* type, NodeInputHandler inputHan
 
   this->_id = id;
   this->_type = type;
+  this->_gpio = Gpio;
 }
 
 void HomieNode::subscribe(const char* property, PropertyInputHandler inputHandler) {
@@ -35,6 +36,49 @@ void HomieNode::subscribe(const char* property, PropertyInputHandler inputHandle
   this->_subscriptions[this->_subscriptionsCount++] = subscription;
 }
 
+bool HomieNode::InInputHandler(String property, String value, char *ptype) const
+{
+	const char * type = NULL;
+
+	type = this->getType();
+	strcpy(ptype,type);
+	Serial.println(F("NBM In input handler"));
+	if (type==NULL)
+		Serial.println(F("NBM type not found"));
+	else {
+		Serial.println(F("NBM type found"));
+		Serial.println(type);
+	}
+
+	char ppin = this->getPin();
+	if (ppin == 'z')
+		return false;
+
+
+	int pin = (int)ppin;
+	if ((strcmp(type,"light") == 0) || (strcmp(type, "switch") == 0))
+		goto lightcontrol;
+	if ((strcmp(type,"pwm") == 0) || (strcmp(type, "dimmer") == 0))
+		goto pwmcontrol;
+	else
+		return false;
+
+lightcontrol:
+	if ((property == "on") && (value == "true")) {
+		digitalWrite(pin, HIGH);
+	} else if ((property == "on") && (value == "false")) {
+		digitalWrite(pin, HIGH);
+	} else
+		return false;
+
+pwmcontrol:
+	if ((property == "value") && ((value.toInt() >= 0) &&
+				      (value.toInt() < 256))) {
+		analogWrite(pin, value.toInt());
+	}
+	return true;
+}
+
 const char* HomieNode::getId() const {
   return this->_id;
 }
@@ -43,6 +87,9 @@ const char* HomieNode::getType() const {
   return this->_type;
 }
 
+char HomieNode::getPin() const {
+  return this->_gpio;
+}
 const Subscription* HomieNode::getSubscriptions() const {
   return this->_subscriptions;
 }

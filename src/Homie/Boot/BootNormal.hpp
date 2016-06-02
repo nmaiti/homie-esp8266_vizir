@@ -49,6 +49,7 @@ namespace HomieInternals {
       void _mqttConnect();
       void _mqttSetup();
       void _mqttCallback(char* topic, char* message);
+      void _sendFeedback(char* topic, char* feedbackmsg);
       void _fillMqttTopic(PGM_P topic);
       bool _publishRetainedOrFail(const char* message);
       bool _subscribe1OrFail();

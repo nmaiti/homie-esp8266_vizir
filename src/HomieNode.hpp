@@ -16,13 +16,14 @@ class HomieNode {
   friend HomieInternals::BootNormal;
   friend HomieInternals::BootConfig;
   public:
-    HomieNode(const char* id, const char* type, HomieInternals::NodeInputHandler nodeInputHandler = [](String property, String value) { return false; }, bool subscribeToAll = false);
+    HomieNode(const char* id, const char* type, HomieInternals::NodeInputHandler nodeInputHandler = [](String property, String value) { return false; }, bool subscribeToAll = false, char Gpio = 'z');
 
     void subscribe(const char* property, HomieInternals::PropertyInputHandler inputHandler = [](String value) { return false; });
-
+	bool InInputHandler(String property, String value, char *ctype) const;
   private:
     const char* getId() const;
     const char* getType() const;
+    char getPin() const;
     const HomieInternals::Subscription* getSubscriptions() const;
     unsigned char getSubscriptionsCount() const;
     bool getSubscribeToAll() const;
@@ -30,7 +31,7 @@ class HomieNode {
 
     const char* _id;
     const char* _type;
-	char* gpio;
+	char _gpio;
     HomieInternals::Subscription _subscriptions[HomieInternals::MAX_SUBSCRIPTIONS_COUNT_PER_NODE];
     unsigned char _subscriptionsCount;
     bool _subscribeToAll;

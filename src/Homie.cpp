@@ -79,7 +79,7 @@ void HomieClass::setup() {
     }
   }
 this->_logger.logln(F("NBM Here in setup"));
-	this->nodesfromConfig();
+	this->registerJsonNodes();
 
 _setupCalled = true;
 
@@ -130,7 +130,48 @@ void HomieClass::setBrand(const char* name) {
   strcpy(this->_interface.brand, name);
 }
 
-void HomieClass::nodesfromConfig(void) {
+bool HomieClass::getHomieNode(String nodename, const HomieNode **homieN) {
+
+	this->_logger.log(F("In getHomieNode, looking for "));
+	this->_logger.logln(nodename);
+	int homieNodeIndex = -1;
+	  for (int i = 0; i < this->_interface.registeredNodesCount; i++) {
+	    const HomieNode* homieNode = this->_interface.registeredNodes[i];
+		this->_logger.logln(this->_interface.registeredNodesCount);
+		this->_logger.logln(homieNode->getId());
+		if (strcmp_P(nodename.c_str(), homieNode->getId()) == 0) {
+			homieNodeIndex = i;
+			this->_logger.log(F("Node found at Index : "));
+			this->_logger.logln(i);
+			*homieN = homieNode;
+			break;
+	    }
+	  }
+	if (homieNodeIndex > -1)
+		return true;
+	return false;
+}
+
+bool HomieClass::gpiofromConfig(String nodename, int *pin, char *type) {
+	int nnodes = this->_config.get().total_nodes;
+	for (int i = 0; i < nnodes; i++) {
+		if (strcmp(nodename.c_str(),this->_config.get().nodes[i].name) == 0) {
+//		if (this->_config.get().nodes[i].name == nodename) {
+			this->_logger.logln(F("NBM here to get data "));
+			*pin = this->_config.get().nodes[i].pin;
+		//	*type = this->_config.get().nodes[i].type;
+			strcpy_P(type, this->_config.get().nodes[i].type);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool lightonHandler2(String property, String value) {
+	return false;
+}
+
+void HomieClass::registerJsonNodes(void) {
 	int nnodes = this->_config.get().total_nodes;
 	this->_logger.logln(F("NBM No of nodes "));
 	this->_logger.logln(nnodes);
@@ -138,10 +179,12 @@ void HomieClass::nodesfromConfig(void) {
 	if (!nnodes)
 		return;
 	for (int i = 0; i < nnodes; i++) {
-		HomieNode *lightNd;
-		lightNd = new HomieNode(this->_config.get().nodes[i].name, this->_config.get().nodes[i].type);
-		Homie.registerNode(lightNd);
-		this->_logger.logln(F("NBM Here in setup"));
+		if (strcmp_P(this->_config.get().nodes[i].type , "light") == 0)  {
+			this->_logger.logln(F("NBM Registering config nodes"));
+			HomieNode *lightNd;
+			lightNd = new HomieNode(this->_config.get().nodes[i].name, this->_config.get().nodes[i].type, lightonHandler2, true, this->_config.get().nodes[i].pin);
+			Homie.registerNode(lightNd);
+		}
 	}
 }
 

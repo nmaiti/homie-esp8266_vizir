@@ -27,10 +27,13 @@ namespace HomieInternals {
       void setLedPin(unsigned char pin, unsigned char on);
       void setBrand(const char* name);
       void setFirmware(const char* name, const char* version);
-	  void nodesfromConfig(void);
+	  void registerJsonNodes(void);
+	  bool nodefromIndex(int nodeIndex, const HomieNode *homienode);
+	  bool gpiofromConfig(String nodename, int *pin, char *type);
+	  bool getHomieNode(String nodename,const HomieNode **homienode);
       void registerNode(HomieNode* node);
-      void setGlobalInputHandler(GlobalInputHandler globalInputHandler);
-      void setResettable(bool resettable);
+	  void setGlobalInputHandler(GlobalInputHandler globalInputHandler);
+	  void setResettable(bool resettable);
       void onEvent(EventHandler handler);
       void setResetTrigger(unsigned char pin, unsigned char state, unsigned int time);
       void disableResetTrigger();
